@@ -11,8 +11,10 @@ class VaultService:
 
     def ingest_card_line(self, line: str) -> list[VaultCard]:
 
+        # 1. Parse the input line to extract card details.
         parsed_data = parse_card_data(line)
 
+        #2. Fetch Scryfall data based on whether the card is a proxy or has a set code.
         price = 0.0
         api_data = None
 
@@ -21,6 +23,7 @@ class VaultService:
         else:
             api_data = fetch_exact_print(parsed_data.name, parsed_data.set_code)
 
+            #Grab the price if available, otherwise default to 0.0.
             if api_data and api_data.get("prices") and api_data["prices"].get("usd"):
                 price = float(api_data["prices"]["usd"])
 
@@ -31,7 +34,7 @@ class VaultService:
         mana_cost = api_data.get("mana_cost") if api_data else None
         type_line = api_data.get("type_line") if api_data else None
 
-        # Create and save domain objects based on quanity.
+        # 3. Create and save domain objects based on quanity.
         saved_cards = []
         for _ in range(parsed_data.quantity):
             card = VaultCard(

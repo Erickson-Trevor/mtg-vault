@@ -1,26 +1,30 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from mtg_vault.domain.models import Base, VaultCard
+from flask import Blueprint, jsonify, request
+from mtg_vault.adapters.database import SessionLocal, CardRepository
+from mtg_vault.services.vault_service import VaultService
 
-# Establish the SQLite connection
-ENGINE = create_engine("sqlite://mtg_vault.db", echo=False)
+vault_blueprint = Blueprint("vault", __name__)
 
-# Create a factory for generating new database sessions.
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
+@vault_blueprint.route("/ingest_card", methods=["POST"])
+def ingest_cards():
+    # 1. Parse the incoming HTTP request
+    data = request.get_json()
+    if not data or "line" not in data:
+        return jsonify({"error": "Missing 'line' in JSON payload"}), 400
 
-def init_db():
-    """Generates the physical database tables based on domain models."""
-    Base.metadata.create_all(bind=ENGINE)
+    # 2. Open a fresh database for this request
+    session = SessionLocal()
 
-class CardRepository:
-    """Handles all database transactions for VaultCard objects."""
+    try:
+        # 3. Instantiate the repository and service
+        repository = CardRepository(session)
+        service = VaultService(repository)
 
-    def __init__(self, session):
-        self.session = session
+        # 4. Execute the ingestion logic
+        saved_cards = service.ingest_card_line(data["line"])
 
-    def save(self, card: VaultCard) -> VaultCard:
-        """Saves a new card to the database and commits the transaction."""
-        self.session.add(card)
-        self.session.commit()
-        self.session.refresh(card)
-        return card
+        # 5. Format HTTP response
+        return jsonify({
+            "status": "success",
+            "cards_added": len(saved_cards),
+            "names": [card.name for card in saved_cards]
+        }), 201
