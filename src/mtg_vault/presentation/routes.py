@@ -28,3 +28,15 @@ def ingest_cards():
             "cards_added": len(saved_cards),
             "names": [card.name for card in saved_cards]
         }), 201
+
+    except ValueError as ve:
+        # Catches parsing errors
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        # Catches any other exceptions
+        session.rollback()
+        return jsonify({"error": "Internal server error", "details": str(e)}), 500
+    finally:
+        session.close()
+    
+    
