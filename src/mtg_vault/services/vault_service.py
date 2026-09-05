@@ -1,5 +1,5 @@
 from mtg_vault.services.parser import parse_card_line
-from mtg_vault.adapters.mock_scryfall import fetch_exact_print, fetch_base_metadata
+from mtg_vault.adapters.scryfall import fetch_exact_print, fetch_base_metadata
 from mtg_vault.domain.models import VaultCard
 from mtg_vault.adapters.database import CardRepository
 
