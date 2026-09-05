@@ -22,10 +22,10 @@ class VaultCard(Base):
     deck_id: Mapped[int] = mapped_column(ForeignKey("decks.id"), nullable=True)
 
     name: Mapped[str] = mapped_column(String(100))
-    set_code: Mapped[str] = mapped_column(String(10, nullable=True))
-    scryfall_id: Mapped[str] = mapped_column(String(50, nullable=True))
-    mana_cost: Mapped[str] = mapped_column(String(50, nullable=True))
-    type_line: Mapped[str] = mapped_column(String(100, nullable=True))
+    set_code: Mapped[str] = mapped_column(String(10), nullable=True)
+    scryfall_id: Mapped[str] = mapped_column(String(50), nullable=True)
+    mana_cost: Mapped[str] = mapped_column(String(50), nullable=True)
+    type_line: Mapped[str] = mapped_column(String(100), nullable=True)
 
     physical_location: Mapped[str] = mapped_column(String(100))
     is_proxy: Mapped[bool] = mapped_column(Boolean, default=False)

@@ -1,5 +1,5 @@
-from mtg_vault.services.parser import parse_card_data
-from mtg_vault.adapters.scryfall import fetch_exact_print, fetch_base_metadata
+from mtg_vault.services.parser import parse_card_line
+from mtg_vault.adapters.mock_scryfall import fetch_exact_print, fetch_base_metadata
 from mtg_vault.domain.models import VaultCard
 from mtg_vault.adapters.database import CardRepository
 
@@ -12,7 +12,7 @@ class VaultService:
     def ingest_card_line(self, line: str) -> list[VaultCard]:
 
         # 1. Parse the input line to extract card details.
-        parsed_data = parse_card_data(line)
+        parsed_data = parse_card_line(line)
 
         #2. Fetch Scryfall data based on whether the card is a proxy or has a set code.
         price = 0.0

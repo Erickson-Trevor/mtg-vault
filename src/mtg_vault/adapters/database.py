@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from mtg_vault.domain.models import Base, VaultCard
 
 # Establish the SQLite connection
-ENGINE = create_engine("sqlite://mtg_vault.db", echo=False)
+ENGINE = create_engine("sqlite:///mtg_vault.db", echo=False)
 
 # Create a factory for generating new database sessions.
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
